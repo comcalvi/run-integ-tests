@@ -6,8 +6,8 @@ import * as core from '@actions/core';
 const RUN_TEST_SUITE_ENDPOINT = 'https://hmc71to6j7.execute-api.us-east-1.amazonaws.com/prod/';
 
 async function run() {
-  const prNumber: string = core.getInput('prNumber', { required: true });
-  const commitSha: string = core.getInput('commitSha', { required: true });
+  const prNumber: string = core.getInput('pr-number', { required: true });
+  const commitSha: string = core.getInput('commit-sha', { required: true });
 
   await runTestSuite(prNumber, commitSha);
 
