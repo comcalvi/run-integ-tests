@@ -4,8 +4,11 @@ import * as core from '@actions/core';
 
 //import * as github from '@actions/github';
 
-
-const RUN_TEST_SUITE_ENDPOINT = 'hmc71to6j7.execute-api.us-east-1.amazonaws.com';
+enum Endpoint {
+  RunTestSuite = '0bjlcakvw7.execute-api.us-east-1.amazonaws.com',
+  GetTestSuiteStatus = 'afvkrm47p7.execute-api.us-east-1.amazonaws.com',
+  DeleteTestSuite = '3brt2r46mh.execute-api.us-east-1.amazonaws.com',
+}
 
 async function run() {
   //const prNumber: string = core.getInput('pr-number', { required: true });
@@ -14,9 +17,13 @@ async function run() {
   const prNumber = '0';
   const commitSha = 'aws-cdk.zip';
 
-  await runTestSuite(prNumber, commitSha);
+  const runTestSuiteResopnse = await runTestSuite(prNumber, commitSha);
 
-  await getTestSuiteStatus(prNumber, commitSha);
+  console.log(runTestSuiteResopnse);
+
+  const getTestSuiteResponse = await getTestSuiteStatus(prNumber, commitSha);
+
+  console.log(getTestSuiteResponse);
 
   await deleteTestSuite(prNumber, commitSha);
 }
@@ -28,43 +35,15 @@ run().catch(error => {
 /**
  * runs a test suite. Will block until the test suite has been started
  */
-async function runTestSuite(prNumber: string, commitSha: string) {
-  let body = '';
-
-  const req = https.request({
-    host: RUN_TEST_SUITE_ENDPOINT,
-    method: 'POST',
-    path: '/prod',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }, (response) => {
-    response.on('data', (chunk) => {
-      body += chunk;
-    });
-
-    response.on('end', () => {
-      console.log(body);
-    });
-  });
-
-  req.write(JSON.stringify({
-    prNumber,
-    commitSha,
-  }));
-
-  req.end();
-
-  //execSync(`curl https://hmc71to6j7.execute-api.us-east-1.amazonaws.com/prod/ --data-raw '{"prNumber": ${prNumber}, "commitSha": ${commitSha} }'`, {
-  //  stdio: 'inherit',
-  //});
+async function runTestSuite(prNumber: string, commitSha: string): Promise<string> {
+  return request(prNumber, commitSha, Endpoint.RunTestSuite);
 }
 
 /**
  * gets the status of a test suite. Will block until the test suite's results are all non-PENDING
  */
-async function getTestSuiteStatus(_prNumber: string, _commitSha: string) {
-
+async function getTestSuiteStatus(prNumber: string, commitSha: string): Promise<string> {
+  return request(prNumber, commitSha, Endpoint.GetTestSuiteStatus);
 }
 
 /**
@@ -81,3 +60,32 @@ async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 */
+
+async function request(prNumber: string, commitSha: string, endpoint: Endpoint): Promise<string> {
+  return new Promise((resolve) => {
+    let body = '';
+    const req = https.request({
+      host: endpoint,
+      method: 'POST',
+      path: '/prod',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }, (response) => {
+      response.on('data', (chunk) => {
+        body += chunk;
+      });
+
+      response.on('end', () => {
+        resolve(body);
+      });
+    });
+
+    req.write(JSON.stringify({
+      prNumber,
+      commitSha,
+    }));
+
+    req.end();
+  });
+}
