@@ -24,13 +24,19 @@ run().catch(error => {
  * runs a test suite. Will block until the test suite has been started
  */
 async function runTestSuite(prNumber: string, commitSha: string) {
-  https.request({
+  const req = https.request({
     host: RUN_TEST_SUITE_ENDPOINT,
     method: 'POST',
-  }).write(JSON.stringify({
+  }, (response) => {
+    console.log(response);
+  });
+
+  req.write(JSON.stringify({
     prNumber,
     commitSha,
   }));
+
+  req.end();
 }
 
 /**
