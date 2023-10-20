@@ -80,11 +80,11 @@ async function run() {
 
   console.log(testResults);
 
+  await deleteTestSuite(prNumber, commitSha);
+
   if (testsFailed(testResults)) {
     throw new Error('some tests failed!');
   }
-
-  await deleteTestSuite(prNumber, commitSha);
 }
 
 run().then().catch(error => {
