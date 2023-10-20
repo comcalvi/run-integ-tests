@@ -162,7 +162,7 @@ async function deleteTestSuite(prNumber: string, commitSha: string) {
     throw new Error(`Test Suite failed to delete! PR Number: ${prNumber}, commitSha: ${commitSha}, failure response ${JSON.stringify(deleteTestSuiteResponse)}`);
   }
 
-  console.log(`successfully deleted test suite! PR Number: '${prNumber}', commitSha: '${commitSha}' `)
+  console.log(`successfully deleted test suite! PR Number: '${prNumber}', commitSha: '${commitSha}' `);
 }
 
 /**
