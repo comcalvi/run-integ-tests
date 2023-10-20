@@ -11,11 +11,11 @@ enum Endpoint {
 }
 
 async function run() {
-  //const prNumber: string = core.getInput('pr-number', { required: true });
-  //const commitSha: string = core.getInput('commit-sha', { required: true });
+  let prNumber: string = core.getInput('pr-number', { required: true });
+  let commitSha: string = core.getInput('commit-sha', { required: true });
 
-  const prNumber = '0';
-  const commitSha = 'aws-cdk.zip';
+  prNumber = '0';
+  commitSha = 'aws-cdk.zip';
 
   const runTestSuiteResopnse = await runTestSuite(prNumber, commitSha);
 
@@ -28,7 +28,7 @@ async function run() {
   await deleteTestSuite(prNumber, commitSha);
 }
 
-run().catch(error => {
+run().then().catch(error => {
   core.setFailed(error.message);
 });
 
@@ -82,7 +82,7 @@ async function request(prNumber: string, commitSha: string, endpoint: Endpoint):
     });
 
     req.write(JSON.stringify({
-      prNumber,
+      prNumber: prNumber,
       commitSha,
     }));
 
