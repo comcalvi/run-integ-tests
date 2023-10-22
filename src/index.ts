@@ -72,7 +72,7 @@ async function run() {
   //let commitSha: string = core.getInput('commit-sha', { required: true });
 
   let prNumber = '0';
-  let commitSha = 'aws-cdk.zip';
+  let commitSha = 'aws-cdk-zip';
 
   await runTestSuite(prNumber, commitSha);
 
@@ -129,6 +129,7 @@ async function getTestResults(prNumber: string, commitSha: string): Promise<Test
       throw new Error(`RunTestSuiteHandler failed! Response: ${getTestSuiteStatusResponse}`);
     }
 
+    console.log('gettting test suite status, response');
     console.log(getTestSuiteStatusResponse);
 
     const session: SessionEntry[] = JSON.parse(getTestSuiteStatusResponse.body);
@@ -146,6 +147,8 @@ function checkPendingTests(session: SessionEntry[]): boolean {
   for (const test of session) {
     if (test.status === TestStatus.PENDING) {
       testsPending = true;
+      console.log('some tests still pending:');
+      console.log(`${test.testName}`);
     }
   }
 
