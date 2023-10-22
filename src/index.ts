@@ -68,11 +68,8 @@ interface SessionEntry extends TestResult {
 }
 
 async function run() {
-  //let prNumber: string = core.getInput('pr-number', { required: true });
-  //let commitSha: string = core.getInput('commit-sha', { required: true });
-
-  let prNumber = '0';
-  let commitSha = 'aws-cdk-zip';
+  let prNumber: string = core.getInput('pr-number', { required: true });
+  let commitSha: string = core.getInput('commit-sha', { required: true });
 
   await runTestSuite(prNumber, commitSha);
 
